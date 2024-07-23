@@ -21,7 +21,7 @@ resource "aws_route53_record" "nextcloud_heyvaldemar_net" {
 # Creates an A record in the Route 53 hosted zone
 resource "aws_route53_record" "ssh_heyvaldemar_net" {
   zone_id = data.aws_route53_zone.route53_zone_1.zone_id
-  name    = "ssh.${data.aws_route53_zone.route53_zone_1.name}"
+  name    = "ssh-nextcloud.${data.aws_route53_zone.route53_zone_1.name}"
   type    = "A"
 
   alias {
