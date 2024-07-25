@@ -29,6 +29,7 @@ services:
       OVERWRITECLIURL: ${external_url}
       OVERWRITEPROTOCOL: https
       OVERWRITEHOST: ${trusted_domain}
+      TRUSTED_PROXIES: 172.16.0.0/12 192.168.0.0/16 10.0.0.0/8 fc00::/7 fe80::/10 2001:db8::/32
       REDIS_HOST: ${redis_host}
     networks:
       - nextcloud-network
