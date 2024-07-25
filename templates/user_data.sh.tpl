@@ -127,3 +127,6 @@ EOF
 
 # Deploy Nextcloud stack in a Docker Swarm
 sudo docker stack deploy -c /opt/nextcloud-docker-swarm.yml nextcloud
+
+# Remove all default template files (uncomment if needed)
+# sudo rm -rf /mnt/nextcloud/core/skeleton/*
