@@ -505,7 +505,7 @@ variable "nextcloud_external_url" {
 }
 
 variable "nextcloud_trusted_domain" {
-  description = "URL on which Nextcloud will be reachable"
+  description = "Domain on which Nextcloud will be reachable"
   type        = string
   default     = "nextcloud.heyvaldemar.net"
 }
