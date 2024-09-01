@@ -25,7 +25,6 @@ services:
       NEXTCLOUD_ADMIN_USER: ${admin_user}
       NEXTCLOUD_ADMIN_PASSWORD: ${admin_user_password}
       NEXTCLOUD_TRUSTED_DOMAINS: ${trusted_domain}
-      TRUSTED_PROXIES: ${trusted_domain}
       OVERWRITECLIURL: ${external_url}
       OVERWRITEPROTOCOL: https
       OVERWRITEHOST: ${trusted_domain}
