@@ -54,6 +54,10 @@ resource "aws_instance" "instance_1" {
     db_password_install             = local.rds_db_credentials_1["nextcloud_password"]
   })
 
+  lifecycle {
+    ignore_changes = [user_data]
+  }
+
   tags = {
     Name = "nextcloud-1"
   }
