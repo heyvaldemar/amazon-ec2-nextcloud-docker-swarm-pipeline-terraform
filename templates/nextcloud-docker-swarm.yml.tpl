@@ -30,6 +30,9 @@ services:
       OVERWRITEHOST: ${trusted_domain}
       TRUSTED_PROXIES: 172.16.0.0/12 192.168.0.0/16 10.0.0.0/8 fc00::/7 fe80::/10 2001:db8::/32
       REDIS_HOST: ${redis_host}
+      SKELETON_DIRECTORY: ""
+      PHP_MEMORY_LIMIT: 4G
+      PHP_UPLOAD_LIMIT: 4G
     networks:
       - nextcloud-network
     ports:
@@ -53,3 +56,18 @@ services:
         reservations:
           cpus: '0.55'
           memory: 512M
+
+  nextcloud-cron:
+    <<: *default-opts
+    image: nextcloud:${image_tag}
+    entrypoint: /cron.sh
+    volumes:
+      - ${data_storage_path}:/var/www/html
+    networks:
+      - nextcloud-network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
