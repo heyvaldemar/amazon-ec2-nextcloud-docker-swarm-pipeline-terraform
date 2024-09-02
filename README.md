@@ -20,6 +20,24 @@ The Terraform script performs the following operations to set up a Nextcloud env
 
 9. **Network Load Balancer Creation**: In addition to the creation of an application load balancer (ALB) for HTTP/HTTPS traffic, an NLB (Network Load Balancer) is created specifically for port 22. The NLB is used for routing traffic to the Nextcloud EC2 instance over SSH. The creation process involves setting up the necessary target groups, listeners, and attachments for the NLB.
 
+# Background Jobs Using Cron
+
+To ensure your Nextcloud instance operates efficiently, it's important to use the "Cron" method to execute background jobs. A dedicated Docker container has already been set up in your environment to handle these tasks.
+
+## Steps to Enable Cron:
+
+1. **Log in to Nextcloud as an Administrator.**
+2. Go to **Settings** (click on your user profile in the top right corner and select "Settings").
+3. In the **Administration** section on the left sidebar, select **Basic settings**.
+4. Scroll down to the **Background jobs** section.
+5. Select the **"Cron (Recommended)"** option.
+
+![nextcloud-cron](https://github.com/user-attachments/assets/325d511b-9c4c-4303-b931-f96594649abb)
+
+## Why Use Cron?
+
+The "Cron" method ensures that background tasks, such as file indexing, notifications, and cleanup operations, run at regular intervals independently of user activity. This method is more reliable and efficient than AJAX or Webcron, particularly for larger or more active instances, as it does not depend on users accessing the site to trigger these tasks. With the dedicated container in your setup, this method keeps your Nextcloud instance responsive and in good health by running these jobs consistently.
+
 # Requirements
 
 Install AWS CLI by following the [guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
