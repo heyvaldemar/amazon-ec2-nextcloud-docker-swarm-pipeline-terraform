@@ -141,6 +141,25 @@ The filename is `TIMESTAMP_nextcloud_data_backup.tar.gz`, where `TIMESTAMP` iden
 
 For example, if the backup name is `2023_07_23_05_31_nextcloud_data_backup.sql`, the timestamp is `2023_07_23_05_31`.
 
+# Fixing Database Index Issues
+
+Your Nextcloud database might be missing some indexes. This situation can occur because adding indexes to large tables can take considerable time, so they are not added automatically. Running `occ db:add-missing-indices` manually allows these indexes to be added while the instance continues running. Adding these indexes can significantly speed up queries on tables like `filecache` and `systemtag_object_mapping`, which might be missing indexes such as `fs_storage_path_prefix` and `systag_by_objectid`.
+
+List all running containers to find the one running Nextcloud:
+
+`docker ps`
+
+Run the command below, replacing `nextcloud-container-name` with your container's name. Adjust `33` to the correct user ID if different:
+
+`docker exec -u 33 -it nextcloud-container-name php occ db:add-missing-indices`
+
+Confirm the indices were added by checking the status:
+
+`docker exec -u 33 -it nextcloud-container-name php occ status`
+
+- Operations on large databases can take time; consider scheduling during low-usage periods.
+- Always backup your database before making changes.
+
 # Backend for Terraform State
 
 The `backend` block in the `01-providers.tf` must remain commented until the bucket and the DynamoDB table are created.

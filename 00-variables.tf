@@ -495,7 +495,7 @@ variable "dynamodb_terraform_state_lock_1_billing_mode" {
 variable "nextcloud_image_tag" {
   description = "Docker image tag for the Nextcloud instance"
   type        = string
-  default     = "27-apache"
+  default     = "29"
 }
 
 variable "nextcloud_external_url" {
