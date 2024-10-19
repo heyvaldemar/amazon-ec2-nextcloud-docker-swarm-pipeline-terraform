@@ -141,6 +141,18 @@ The filename is `TIMESTAMP_nextcloud_data_backup.tar.gz`, where `TIMESTAMP` iden
 
 For example, if the backup name is `2023_07_23_05_31_nextcloud_data_backup.sql`, the timestamp is `2023_07_23_05_31`.
 
+# Disabling Skeleton Directory for New Users
+
+New Nextcloud users typically receive default files and folders upon account creation, which are sourced from the skeleton directory. Disabling this feature can be useful to provide a clean start for users and reduce disk usage. Use the `occ config:system:set` command to set the skeleton directory path to an empty string, effectively disabling the default content for new users.
+
+List all running containers to find the one running Nextcloud:
+
+`docker ps`
+
+Run the command below, replacing `nextcloud-container-name` with your container's name. Adjust `33` to the correct user ID if different:
+
+`docker exec -u 33 -it nextcloud-container-name php occ config:system:set skeletondirectory --value=''`
+
 # Fixing Database Index Issues
 
 Your Nextcloud database might be missing some indexes. This situation can occur because adding indexes to large tables can take considerable time, so they are not added automatically. Running `occ db:add-missing-indices` manually allows these indexes to be added while the instance continues running. Adding these indexes can significantly speed up queries on tables like `filecache` and `systemtag_object_mapping`, which might be missing indexes such as `fs_storage_path_prefix` and `systag_by_objectid`.
