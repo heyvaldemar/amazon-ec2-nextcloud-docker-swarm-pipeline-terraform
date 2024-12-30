@@ -61,6 +61,7 @@ Please be aware that this Terraform deployment operates on the premise that your
 ## Secrets
 
 Create secrets with [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) for:
+
 1. Username and password for the database
 2. Username and password for the Nextcloud
 3. Set secrets ARNs in the `00-variables.tf` file
