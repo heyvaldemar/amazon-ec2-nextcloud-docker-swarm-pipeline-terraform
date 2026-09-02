@@ -88,14 +88,14 @@ variable "subnet_group_2_name" {
 variable "route53_zone_1_name" {
   description = "Domain name for the ACM certificate"
   type        = string
-  default     = "heyvaldemar.net"
+  default     = "example.com"
 }
 
 # AWS Certificate Manager Variables
 variable "acm_1_certificate_1_domain_name" {
   description = "Domain name for the ACM certificate"
   type        = string
-  default     = "nextcloud.heyvaldemar.net"
+  default     = "nextcloud.example.com"
 }
 
 # RDS Variables
@@ -501,11 +501,11 @@ variable "nextcloud_image_tag" {
 variable "nextcloud_external_url" {
   description = "URL on which Nextcloud will be reachable"
   type        = string
-  default     = "https://nextcloud.heyvaldemar.net"
+  default     = "https://nextcloud.example.com"
 }
 
 variable "nextcloud_trusted_domain" {
   description = "Domain on which Nextcloud will be reachable"
   type        = string
-  default     = "nextcloud.heyvaldemar.net"
+  default     = "nextcloud.example.com"
 }

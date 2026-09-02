@@ -4,7 +4,7 @@ data "aws_route53_zone" "route53_zone_1" {
 }
 
 # Creates an A record in the Route 53 hosted zone
-resource "aws_route53_record" "nextcloud_heyvaldemar_net" {
+resource "aws_route53_record" "nextcloud_example_com" {
   zone_id = data.aws_route53_zone.route53_zone_1.zone_id
   name    = "nextcloud.${data.aws_route53_zone.route53_zone_1.name}"
   type    = "A"
@@ -19,7 +19,7 @@ resource "aws_route53_record" "nextcloud_heyvaldemar_net" {
 }
 
 # Creates an A record in the Route 53 hosted zone
-resource "aws_route53_record" "ssh_heyvaldemar_net" {
+resource "aws_route53_record" "ssh_example_com" {
   zone_id = data.aws_route53_zone.route53_zone_1.zone_id
   name    = "ssh.${data.aws_route53_zone.route53_zone_1.name}"
   type    = "A"
