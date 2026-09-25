@@ -1,6 +1,7 @@
 # Nextcloud on EC2 in Docker Swarm: Terraform
 
 [![Terraform Verification](https://github.com/heyvaldemar/amazon-ec2-nextcloud-docker-swarm-pipeline-terraform/actions/workflows/terraform-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/amazon-ec2-nextcloud-docker-swarm-pipeline-terraform/actions/workflows/terraform-verification.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14916/badge)](https://www.bestpractices.dev/projects/14916)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository deploys Nextcloud running in a single-node Docker Swarm on EC2 with RDS PostgreSQL, ElastiCache Redis, an EBS data volume, an ALB with an ACM certificate, DNS in Route 53, and a self-provisioned Terraform state backend. Flat, numbered `.tf` files, no modules to chase, every provider locked to an exact build.
