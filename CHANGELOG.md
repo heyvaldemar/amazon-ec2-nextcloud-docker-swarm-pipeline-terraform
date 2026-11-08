@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **The database password is no longer on a command line.** `user_data` took the first backup as `PGPASSWORD=<password> pg_dump …` and installed the nightly backup as a crontab line carrying the same assignment. cron runs each line as `sh -c '<the line>'`, so the password sat in a shell's arguments, readable by every user on the instance with `ps`, for as long as each dump ran; the crontab was staged in a world-readable file under `/tmp` too. The script now writes the password to `/root/.pgpass` (mode 600, `:` and `\` escaped as that file needs) with the shell's own `printf`, and both backups run `pg_dump` with no password on the line. `tests/posture.tftest.hcl` renders the template with a stand-in password and asserts there is no `PGPASSWORD=` in it, that `/root/.pgpass` is written, and that the password appears only on that line; a new plant puts the assignment back into the crontab line and the test has to notice. Existing instances are not touched (`ignore_changes = [user_data]`): on one built from an earlier release, the crontab still carries the old line until the instance is rebuilt or the line is edited by hand.
 
 ## [1.3.8] - 2026-10-29
 

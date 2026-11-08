@@ -64,13 +64,27 @@ sudo apt-get update
 # Install PostgreSQL client
 sudo apt-get install -y curl openssh-server ca-certificates tzdata curl postgresql-client
 
+# THE DATABASE PASSWORD GOES IN /root/.pgpass, NOT ON A COMMAND LINE.
+# The backup used to set PGPASSWORD on pg_dump's own command, and the nightly
+# crontab line carried the same assignment. cron runs each line as
+# sh -c '<the line>', so the password sat in a shell's arguments, readable by
+# every user on the host with ps, for as long as each dump ran, and the
+# crontab staged in /tmp was world-readable. pg_dump reads ~/.pgpass itself;
+# printf is bash's own, so writing the file puts the value in no process's
+# arguments either. ':' and '\' in the password are escaped as .pgpass needs.
+PGPASS_VALUE='${db_password_install}'
+PGPASS_VALUE="$${PGPASS_VALUE//\\/\\\\}"
+PGPASS_VALUE="$${PGPASS_VALUE//:/\\:}"
+( umask 077 && printf '*:*:%s:%s:%s\n' '${db_name_install}' '${db_username_install}' "$PGPASS_VALUE" > /root/.pgpass )
+unset PGPASS_VALUE
+
 # Create a backup if the source directory exists
 if [ -d "${ebs_volume_1_mount_point}" ]; then
     tar -czvf "${backup_ebs_volume_1_mount_point}/nextcloud/$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_data_backup.tar.gz" -C "${ebs_volume_1_mount_point}" .
     echo "Backup created at ${backup_ebs_volume_1_mount_point}/nextcloud/$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_data_backup.tar.gz"
 
     RDS_ENDPOINT_NO_PORT=$(echo ${db_host_install} | sed 's/:5432//')
-    PGPASSWORD=${db_password_install} pg_dump -U ${db_username_install} -h $RDS_ENDPOINT_NO_PORT -d ${db_name_install} > "${backup_ebs_volume_1_mount_point}/nextcloud/$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql"
+    pg_dump -U ${db_username_install} -h $RDS_ENDPOINT_NO_PORT -d ${db_name_install} > "${backup_ebs_volume_1_mount_point}/nextcloud/$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql"
     echo "Database backup created at ${backup_ebs_volume_1_mount_point}/nextcloud/$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql"
 else
     echo "Directory to be backed up does not exist."
@@ -87,13 +101,13 @@ if [ -f "$CRON_FILE" ]; then
   else
     echo "Adding backup cron job to existing cron file..."
     echo "0 2 * * * tar -czvf ${backup_ebs_volume_1_mount_point}/nextcloud/\$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_data_backup.tar.gz -C ${ebs_volume_1_mount_point} ." >> "$CRON_FILE"
-    echo "0 2 * * * PGPASSWORD=${db_password_install} pg_dump -U ${db_username_install} -h \$(echo ${db_host_install} | sed 's/:5432//') -d ${db_name_install} > ${backup_ebs_volume_1_mount_point}/nextcloud/\$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql" >> "$CRON_FILE"
+    echo "0 2 * * * pg_dump -U ${db_username_install} -h \$(echo ${db_host_install} | sed 's/:5432//') -d ${db_name_install} > ${backup_ebs_volume_1_mount_point}/nextcloud/\$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql" >> "$CRON_FILE"
     crontab "$CRON_FILE"
   fi
 else
   echo "Creating new cron file and adding backup cron job..."
   echo "0 2 * * * tar -czvf ${backup_ebs_volume_1_mount_point}/nextcloud/\$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_data_backup.tar.gz -C ${ebs_volume_1_mount_point} ." > "$CRON_FILE"
-  echo "0 2 * * * PGPASSWORD=${db_password_install} pg_dump -U ${db_username_install} -h \$(echo ${db_host_install} | sed 's/:5432//') -d ${db_name_install} > ${backup_ebs_volume_1_mount_point}/nextcloud/\$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql" >> "$CRON_FILE"
+  echo "0 2 * * * pg_dump -U ${db_username_install} -h \$(echo ${db_host_install} | sed 's/:5432//') -d ${db_name_install} > ${backup_ebs_volume_1_mount_point}/nextcloud/\$(date +\%Y_\%m_\%d_\%H_\%M)_nextcloud_db_backup.sql" >> "$CRON_FILE"
   crontab "$CRON_FILE"
 fi
 

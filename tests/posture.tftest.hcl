@@ -192,3 +192,37 @@ run "the_defaults_are_the_secure_ones" {
     error_message = "redis_security_group_1 opens a port other than 80 and 443 to the internet"
   }
 }
+
+# THE DATABASE PASSWORD ON NO COMMAND LINE. cron runs each crontab line as
+# sh -c '<line>', so PGPASSWORD=<password> in one put the password in a shell's
+# arguments, where every user on the host reads it with ps, for as long as each
+# dump ran; the crontab staged in /tmp was world-readable too. The instance
+# writes /root/.pgpass instead. tests/render renders the very template the
+# instance gets, with a stand-in password, because the configuration's own
+# rendering carries timestamp() and is unknown until apply.
+run "the_database_password_is_on_no_command_line" {
+  command = plan
+
+  module {
+    source = "./tests/render"
+  }
+
+  variables {
+    password = "e2e-stand-in-db-password"
+  }
+
+  assert {
+    condition     = !strcontains(output.user_data, "PGPASSWORD=")
+    error_message = "user_data hands the database password over as PGPASSWORD=, in a command or a crontab line: it belongs in /root/.pgpass"
+  }
+
+  assert {
+    condition     = strcontains(output.user_data, "> /root/.pgpass")
+    error_message = "user_data writes no /root/.pgpass, so the backups have no password to read"
+  }
+
+  assert {
+    condition     = length(regexall("e2e-stand-in-db-password", output.user_data)) == 1
+    error_message = "the database password appears in user_data somewhere other than the one line that writes /root/.pgpass"
+  }
+}
